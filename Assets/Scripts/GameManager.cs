@@ -1,21 +1,22 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using TMPro;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     public enum GameState
     {
-        Pause,Play
+        Pause, Play
     }
     public static GameManager instance;
     public GameState gameState;
-    int currentScore = 0,highScore;
-    [SerializeField] GameObject startPnl, losePnl;
+    int currentScore = 0, highScore;
+    [SerializeField] GameObject losePnl;
     [SerializeField] TextMeshProUGUI scoreText, highScoreText;
-    //Player player;
+
+    float fallingFruits = 0;
+
     private void Awake()
     {
         if (instance != null)
@@ -23,8 +24,8 @@ public class GameManager : MonoBehaviour
         else
             instance = this;
 
-       highScore= PlayerPrefs.GetInt("High Score", 0);
-       // player = FindObjectOfType<Player>();
+        highScore = PlayerPrefs.GetInt("High Score", 0);
+        StartGame();
     }
     public void Pause()
     {
@@ -33,32 +34,45 @@ public class GameManager : MonoBehaviour
     }
     public void Lose()
     {
-        SoundManager.instance.PlaySound(SoundManager.sounds.hit);
+        //SoundManager.instance.PlaySound(SoundManager.sounds.hit);
         Pause();
-        if(currentScore>highScore)
+        CheckHighScore();
+        highScoreText.text = "High Score : " + highScore.ToString();
+        losePnl.gameObject.SetActive(true);
+    }
+
+    private void CheckHighScore()
+    {
+        if (currentScore > highScore)
         {
             PlayerPrefs.SetInt("High Score", currentScore);
             highScore = PlayerPrefs.GetInt("High Score");
             highScoreText.text = "New High Score : " + highScore.ToString();
         }
-        highScoreText.text ="High Score : "+ highScore.ToString();
-        losePnl.gameObject.SetActive(true);
     }
-    public void IncreaseScore()
+
+    public void IncreaseScore(int score)
     {
-        currentScore++;
+        currentScore += score;
         scoreText.text = currentScore.ToString();
-        SoundManager.instance.PlaySound(SoundManager.sounds.Score);
     }
     public void StartGame()
     {
-        startPnl.gameObject.SetActive(false);
+
         losePnl.gameObject.SetActive(false);
         gameState = GameState.Play;
         currentScore = 0;
-        //player.transform.position = player.startPos;
         scoreText.text = string.Empty;
-        ObjectPooler.instance.DisableAll();
+        //ObjectPooler.instance.DisableAll();
         Time.timeScale = 1;
+        fallingFruits = 0;
+    }
+
+    public void IncreaseFallingFruits()
+    {
+        if (fallingFruits >= 3)
+            Lose();
+        else
+            fallingFruits++;
     }
 }

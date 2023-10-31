@@ -9,8 +9,8 @@ public class Blade : MonoBehaviour
     private Collider collider;
     public Vector3 direction { get; private set; }
     bool slicing;
-    private float minSliceVeclociy = 0.01f;
-    public float force { get; private set; }=5;
+    private float minSliceVelocity = 1;
+    public float force { get; private set; } = 5;
 
     void Awake()
     {
@@ -18,19 +18,23 @@ public class Blade : MonoBehaviour
         collider = GetComponent<Collider>();
         trailRenderer = GetComponent<TrailRenderer>();
     }
-    // Start is called before the first frame update
+
     void OnEnable()
     {
         StopSlicing();
     }
+
     void OnDisable()
     {
         StopSlicing();
     }
 
-    // Update is called once per frame
     void Update()
     {
+
+        if (GameManager.instance.gameState != GameManager.GameState.Play)
+            return;
+
         if (Input.GetMouseButtonDown(0))
         {
             StartSlicing();
@@ -43,36 +47,40 @@ public class Blade : MonoBehaviour
         {
             ContinueSlicing();
         }
-
     }
 
     private void StartSlicing()
     {
-
         Vector3 newPosition = cam.ScreenToWorldPoint(Input.mousePosition);
         newPosition.z = 0;
-        direction = newPosition - transform.position;
+        transform.position = newPosition;
         slicing = true;
         collider.enabled = true;
         trailRenderer.enabled = true;
+        trailRenderer.Clear();
     }
+
     private void StopSlicing()
     {
         slicing = false;
         collider.enabled = false;
+        trailRenderer.Clear();
         trailRenderer.enabled = false;
+        direction = Vector3.zero;
     }
+
     private void ContinueSlicing()
     {
         Vector3 newPosition = cam.ScreenToWorldPoint(Input.mousePosition);
         newPosition.z = 0;
-        direction = newPosition - transform.position;
-        float velocity = newPosition.magnitude / Time.deltaTime;
-        collider.enabled = velocity > minSliceVeclociy;
-        transform.position = newPosition;
-        force=5*(velocity/60);
-        force=Mathf.Clamp(force,5,10);
-        
 
+        // Check if the new position is significantly different from the current position
+        if (newPosition != transform.position)
+        {
+            direction = newPosition - transform.position;
+            float velocity = direction.magnitude / Time.deltaTime;
+            collider.enabled = velocity > minSliceVelocity;
+            transform.position = newPosition;
+        }
     }
 }

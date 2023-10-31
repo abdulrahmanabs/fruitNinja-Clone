@@ -19,7 +19,7 @@ public class SoundManager : MonoBehaviour
 
     public enum sounds
     {
-        hit, jumpSound, Score
+        slice
     }
     // Start is called before the first frame update
  
