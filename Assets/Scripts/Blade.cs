@@ -32,7 +32,7 @@ public class Blade : MonoBehaviour
     void Update()
     {
 
-        if (GameManager.instance.gameState != GameManager.GameState.Play)
+        if (GameManager.Instance.gameState != GameManager.GameState.Play)
             return;
 
         if (Input.GetMouseButtonDown(0))
@@ -67,6 +67,7 @@ public class Blade : MonoBehaviour
         trailRenderer.Clear();
         trailRenderer.enabled = false;
         direction = Vector3.zero;
+        
     }
 
     private void ContinueSlicing()

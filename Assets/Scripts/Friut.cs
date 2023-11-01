@@ -56,11 +56,13 @@ public class Fruit : MonoBehaviour
             Blade blade = other.GetComponent<Blade>();
             Slice(blade.direction, blade.transform.position, blade.force);
         }
-        else if(other.gameObject.CompareTag("Fall Area"))
+        else if (other.gameObject.CompareTag("Fall Area"))
         {
-            if(!isSlicable)
-            return; 
-            GameManager.instance.IncreaseFallingFruits();
+            if (isSlicable)
+            {
+                GameManager.Instance.IncreaseFallingFruits();
+            }
+
             gameObject.SetActive(false);
         }
     }
@@ -86,12 +88,11 @@ public class Fruit : MonoBehaviour
             rb.AddForceAtPosition(direction.normalized * force, position, ForceMode.Impulse);
         }
         particle.Play();
-        print("direction : "+direction);
-        print("angle : "+angle);
-        print("Position : "+position);
         isSlicable = false;
         SoundManager.instance.PlaySound(SoundManager.sounds.slice);
-        GameManager.instance.IncreaseScore(score);
-        
+        ScoreManager.Instance.IncreaseScore(score);
+        PopupText.Instance.ShowPopup(transform.position, score.ToString(), insideMaterial.color);
+        CameraShaker.Instance.Shake(0.1f, 0.1f);
+
     }
 }

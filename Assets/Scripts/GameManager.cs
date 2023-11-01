@@ -1,69 +1,55 @@
-
 using UnityEngine;
 using TMPro;
 using System;
 
 public class GameManager : MonoBehaviour
 {
+    public Action OnPlayerLost;
+    public static GameManager Instance { get; private set; }
+
     public enum GameState
     {
         Pause, Play
     }
-    public static GameManager instance;
-    public GameState gameState;
-    int currentScore = 0, highScore;
-    [SerializeField] GameObject losePnl;
-    [SerializeField] TextMeshProUGUI scoreText, highScoreText;
 
-    float fallingFruits = 0;
+    public GameState gameState { get; private set; } = GameState.Play;
+
+    [SerializeField] private GameObject losePanel;
+
+    private float fallingFruits;
 
     private void Awake()
     {
-        if (instance != null)
-            Destroy(this.gameObject);
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
         else
-            instance = this;
+        {
+            Instance = this;
+        }
 
-        highScore = PlayerPrefs.GetInt("High Score", 0);
         StartGame();
     }
+
     public void Pause()
     {
         Time.timeScale = 0;
         gameState = GameState.Pause;
     }
+
     public void Lose()
     {
-        //SoundManager.instance.PlaySound(SoundManager.sounds.hit);
         Pause();
-        CheckHighScore();
-        highScoreText.text = "High Score : " + highScore.ToString();
-        losePnl.gameObject.SetActive(true);
+        OnPlayerLost?.Invoke();
+        SetActive(losePanel, true);
+        Spawner.Instance.ClearAllObjects();
     }
 
-    private void CheckHighScore()
-    {
-        if (currentScore > highScore)
-        {
-            PlayerPrefs.SetInt("High Score", currentScore);
-            highScore = PlayerPrefs.GetInt("High Score");
-            highScoreText.text = "New High Score : " + highScore.ToString();
-        }
-    }
-
-    public void IncreaseScore(int score)
-    {
-        currentScore += score;
-        scoreText.text = currentScore.ToString();
-    }
     public void StartGame()
     {
-
-        losePnl.gameObject.SetActive(false);
+        SetActive(losePanel, false);
         gameState = GameState.Play;
-        currentScore = 0;
-        scoreText.text = string.Empty;
-        //ObjectPooler.instance.DisableAll();
         Time.timeScale = 1;
         fallingFruits = 0;
     }
@@ -71,8 +57,17 @@ public class GameManager : MonoBehaviour
     public void IncreaseFallingFruits()
     {
         if (fallingFruits >= 3)
+        {
             Lose();
+        }
         else
+        {
             fallingFruits++;
+        }
+    }
+
+    private void SetActive(GameObject obj, bool active)
+    {
+        obj.SetActive(active);
     }
 }
