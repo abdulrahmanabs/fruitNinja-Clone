@@ -1593,10 +1593,19 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.23808873
         inSlope: 0
-        outSlope: -1
+        outSlope: 0.9864673
         tangentMode: 69
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.45598733
+        value: 0.6879053
+        inSlope: -0.35791376
+        outSlope: -0.35791376
+        tangentMode: 1
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
@@ -1685,8 +1694,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.4, y: 0.4, z: 6.6085944}
-  m_Center: {x: 0, y: 0, z: 0.337981}
+  m_Size: {x: 0.4, y: 0.4, z: 24.167313}
+  m_Center: {x: 0, y: 0, z: -8.44138}
 --- !u!1 &1139143235
 GameObject:
   m_ObjectHideFlags: 0
